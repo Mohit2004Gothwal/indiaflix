@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
 async function request(path, options = {}) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -11,12 +11,13 @@ async function request(path, options = {}) {
     ? await response.json()
     : await response.text();
 
-  if (!response.ok) {
-    const message = typeof payload === 'object' && payload
-      ? payload.message || payload.error
-      : payload;
-    throw new Error(message || `Request failed (${response.status})`);
-  }
+ if (!response.ok) {
+  const raw = typeof payload === 'object' && payload
+    ? payload.message || payload.error
+    : payload;
+  const message = typeof raw === 'string' ? raw : raw ? JSON.stringify(raw) : '';
+  throw new Error(message || `Request failed (${response.status})`);
+}
 
   return payload;
 }

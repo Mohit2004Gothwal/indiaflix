@@ -90,7 +90,9 @@ export default function App() {
             <div className="state-panel error-panel">
               <div className="state-icon"><CircleHelp size={23} /></div><h3>We couldn't load the plans</h3>
               <p>{error}</p>
-              <p className="state-hint">Check that the backend is running at <code>{import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'}</code> and that its CORS settings allow <code>http://localhost:5173</code>.</p>
+              {import.meta.env.DEV && (
+             <p className="state-hint">Check that the backend is running at <code>{import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'}</code> and that its CORS settings allow <code>http://localhost:5173</code>.</p>
+          )}
               <button className="button button-secondary" type="button" onClick={loadPlans}><RefreshCw size={16} /> Try again</button>
             </div>
           ) : plans.length === 0 ? (
