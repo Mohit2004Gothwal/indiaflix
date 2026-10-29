@@ -1,15 +1,16 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const pool = require("./db");
 const initializeDatabase = require("./schema");
 
-require("dotenv").config();
 
 const app = express();
 
 app.use(express.json());
-app.use(cors({
-  origin: process.env.FRONTEND_URL
+app.use(cors({ 
+    origin: ["http://localhost:5173", "https://indiaflix-gold.vercel.app"] 
 }));
 
 // Get all active plans with their features
@@ -395,17 +396,38 @@ app.get("/api/health",  async(req,res)=>{
 });
 
 // Start server
-async function startServer() {
-  await initializeDatabase();
+// async function startServer() {
+//   await initializeDatabase();
 
-  const port = process.env.PORT || 3000;
+//   const port = process.env.PORT || 3000;
 
-  app.listen(port, () => {
-    console.log(`Indiaflix API running on port ${port}`);
-  });
+//   app.listen(port, () => {
+//     console.log(`Indiaflix API running on port ${port}`);
+//   });
+// }
+
+// startServer().catch(error => {
+//   console.error("Failed to start server:", error);
+//   process.exit(1);
+// });
+
+module.exports = app;
+
+if (require.main === module) {
+  async function startServer() {
+    try {
+      await initializeDatabase();
+
+      const PORT = process.env.PORT || 3000;
+
+      app.listen(PORT, () => {
+        console.log(`IndiaFlix API running on port ${PORT}`);
+      });
+    } catch (error) {
+      console.error("Failed to start server:", error);
+      process.exit(1);
+    }
+  }
+
+  startServer();
 }
-
-startServer().catch(error => {
-  console.error("Failed to start server:", error);
-  process.exit(1);
-});
